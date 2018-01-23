@@ -5,7 +5,7 @@
     <div class="col-xs-offset-3 col-xs-6">
         <div class="panel panel-default">
             <div class="panel-heading">会員登録</div>
-            <div class="panel-body">≈
+            <div class="panel-body">
                 {!! Form::open(['route' => 'signup.post']) !!}
                     <div class="form-group">
                         {!! Form::label('name', 'お名前') !!}

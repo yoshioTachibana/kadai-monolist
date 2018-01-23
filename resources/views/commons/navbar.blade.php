@@ -14,7 +14,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (Auth::check())
                         <li>
-                            <a href="#">
+                            <a href="{{ routes('items.create') }}">
                                 <span class="glyphicon-plus" aria-hidden="true"></span>
                                 アイテム追加
                             </a>

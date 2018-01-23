@@ -21,7 +21,7 @@
         
         <div class="container">
             @include('commons.error_messages')
-            @yiels('content')
+            @yield('content')
         </div>
         
         @include('commons.footer')
