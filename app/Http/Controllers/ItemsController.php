@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\Item;
-
-class WelcomeController extends Controller
+class itemsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,10 +16,7 @@ class WelcomeController extends Controller
      */
     public function index()
     {
-        $items = Item::orderBy('updated_at', 'desc')->paginate(20);
-        return view('welcome', [
-            'items' => $items,
-        ]);
+        //
     }
 
     /**
@@ -42,7 +37,32 @@ class WelcomeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $keyword = request()->keyword;
+        $item = [];
+        if ($keyword) {
+            $client = new\RakutenRws_Client();
+            $client->setApplicationId(env('RAKUTEN_APPLICATION_ID'));
+            
+            $rws_response = $client->execute('IchibaItemSearch', [
+                'keyword' => $keyword,
+                'imageFlag' => 1,
+                'hts' => 20,
+            ]);
+            
+            foreach ($rws_response->getData()['Items'] as $rws_item) {
+                $item = new \App\Item();
+                $item->code = $rws_item['Item']['itemCode'];
+                $item->name = $rws_item['Item']['itemName'];
+                $item->url  = $rws_item['Item']['itemUrl'];
+                $item->image_url = str_replace('?_ex=128x128', '', $rws_item['Item']['mediumImageUrls'][0]['imageUrl']);
+                $items[] = $item;
+            }
+        }
+        
+        return view('items.create', [
+            'keyword' => $keyword,
+            'items' => $items,
+        ]);
     }
 
     /**
@@ -53,7 +73,13 @@ class WelcomeController extends Controller
      */
     public function show($id)
     {
-        //
+        $item = Item::find($id);
+        $want_users = $item->want_users;
+        
+        return view('items.show', [
+            'item' => $item,
+            'want_users' => $want_users,
+        ]);
     }
 
     /**
